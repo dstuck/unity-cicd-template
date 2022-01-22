@@ -1,0 +1,79 @@
+name: Build game
+
+on:
+  push: { branches: [main] }
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  build:
+    name: Build my project for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+        - ./
+        unityVersion:
+          - 2020.1.4f1
+        targetPlatform:
+          - WebGL # Build a HTML playable in browser
+
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-
+            Library-
+
+
+      # Test
+      #- name: Run tests
+      #  uses: webbertakken/unity-test-runner@v1.3
+      #  with:
+      #    unityVersion: ${{ matrix.unityVersion }}
+
+      # Build
+      - name: Build project
+        uses: webbertakken/unity-builder@v0.10
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+
+      # Output
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build
+          path: build
+
+  deployHTML:
+    name: Deploy HTML App to itch.io
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download builds
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Deploy HTML build to itch.io
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: webgl-beta
+          ITCH_GAME: PROJECT_NAME
+          ITCH_USER: USER_NAME
+          PACKAGE: WebGL
+
