@@ -13,6 +13,12 @@ Before you can run the unity-builder action, you'll need to create a unity licen
 - Add the contents to a secret named UNITY_LICENSE in Settings > Secrets
 - Remove the action from workflows
 
+Set up Butler Credentials
+-------------------------
+Set up your Butler credentials, following the [CI Builds Credentials documentation on Itch.io](https://itch.io/docs/butler/login.html#running-butler-from-ci-builds-travis-ci-gitlab-ci-etc)
+
+Add your api key to a secret named BUTLER_CREDENTIALS in github in Settings > Secrets
+
 Set up Builds and Deploys
 -------------------------
 Move the contents of the `workflows/` directory to `.github/workflows/` in
