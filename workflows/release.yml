@@ -69,7 +69,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Deploy HTML build to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
+        uses: dstuck/butler-publish-itchio-action@v1.1.0
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
           CHANNEL: webgl-beta
