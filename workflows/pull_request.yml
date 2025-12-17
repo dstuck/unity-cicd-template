@@ -1,11 +1,38 @@
-name: Release
+name: Pull Request
 
-on: 
-  push:
-    branches:
-      - main
+on: pull_request
 
 jobs:
+  test:
+    if: false
+    name: Test my project
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          coverageOptions: false
+          testMode: EditMode
   build:
     name: Build my project
     runs-on: ubuntu-latest
@@ -51,24 +78,3 @@ jobs:
         with:
           name: Build
           path: build
-
-  deployHTML:
-    name: Deploy HTML App to itch.io
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download builds
-        uses: actions/download-artifact@v4
-        with:
-          name: Build
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Deploy HTML build to itch.io
-        uses: dstuck/butler-publish-itchio-action@v1.1.0
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
-          CHANNEL: webgl
-          ITCH_GAME: PROJECT_NAME
-          ITCH_USER: USER_NAME
-          PACKAGE: WebGL
-
