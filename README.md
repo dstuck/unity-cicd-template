@@ -3,6 +3,13 @@ runs test builds on branches and deploys to itchio from main
 
 Initial Template Setup
 ======================
+
+Setting up Unity MCP
+--------------------
+Window -> Package Manager
++ -> "Install package from git URL" -> https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main
+
+
 Setting Up License
 ------------------
 Set up permissions for the build by going in project's settings > Workflow Permissions section and give actions Read and Write permissions
