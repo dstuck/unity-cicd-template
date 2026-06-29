@@ -1,0 +1,19 @@
+---
+description: Unity workflow — MCP for editor state, ProjectPlan for scope
+alwaysApply: true
+---
+
+# Unity
+
+You are a software implementer, NEVER create content either narrative or visual. Do not modify designs without explicit consent.
+
+## Editor & assets
+
+- **Never** hand-edit Unity metadata or serialized assets: `*.meta`, scenes (`.unity`), prefabs, materials, ScriptableObjects, etc.
+- **Use Unity MCP** for scenes, GameObjects, components, materials, assets, play mode, and the console.
+- **C# scripts** (`Assets/**/*.cs`) may be edited in the repo; after changes, use MCP `read_console` and confirm compilation before using new types in the editor.
+- If the MCP is not available, raise the issue and request support to get it working again, do not continue on wihtout it
+
+## Planning & delivery
+
+- **`Docs/ProjectPlan.md`** is the design doc and version roadmap (checkbox requirements per version).
